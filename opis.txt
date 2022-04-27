@@ -1,0 +1,59 @@
+double sigmoid(double x);                           zwraca wartość funkcji sigmoid tj. e^x / (e^x +1)
+double ReLU(double x);                              zwraca wartość funkcji ReLU tj. max(0,x)
+double sigmoidDerivativeUsingSourceVal(double x);   zwraca wartość pochodnej funkcji sigmoid dla dowolnego x 
+double sigmoidDerivative(double x);                 zwraca wartość pochodnej funkcji sigmoid dla x = sigmoid(x), używana przy funkcji aktywacji sigmoid
+
+class neuron{ 
+    public:
+    vector <double> weights;    zbiór wag łączących neuron z warswą poprzednią
+    double val;                 stan neuronu
+    double bias;                próg działania, ang. 'bias'
+    double d;                   zmienna używana jako delta, przy propagacji wstecznej
+    neuron(int nonb);           konsturktor neuronu, pobiera ilość neuronów poprzedniej warstwy oraz tworzy odpowiadającą ilość wag
+};
+
+class layer{
+    public:
+    vector <neuron *> lay;              zbiór neuronów
+    layer(int nOfNeurons, int nonb);    konsturktor warstwy neuronów, pobiera ilość neuronów przeznaczonych na tę warstwę
+};
+
+class nnet{
+    public:
+    vector <layer *> net;                                       zbiór warstw
+    nnet(vector <int> &n_struct);                               konsturktor sieci, pobiera informacje o jej strukturze         
+    void printNet();                                            funkcja ta wypisuje stan neuronów, oraz wartości wag i progów działania
+    void saveNet(string name);                                  funkcja zapisuje sieć do pliku
+    void forward(vector <double> &data);                        algorytm propagacji w przód
+    void back_d(vector <double> &error);                        algorytm propagacji wstecznej cz I
+    void for_d();                                               algorytm propagacji wstecznej cz II
+    vector <double> softmax();                                  funkcja zwraca zbiór unormalizownych stanów neuronów ostatniej warstwy
+    int max_of_last_lay_inx();                                  funkcja zwraca indeks najbardziej pobudzonego neuronu ostatniej warstwy
+    int max_of_softmax();					funkcja zwraca indeks najbardziej pobudzonego neuronu ostatniej warstwy, po znormalizowaniu wartości
+    vector <double> error_last(vector <double> &target);        funkcja zwraca zbiór wartości funkcji kosztu
+    double cost_last_lay(vector <double> &target);              funkcja zwraca sumę kosztów ostatniej warstwy
+    void out_last_lay();                                        funkcja wypisuje indeksy oraz wartości neuronów ostatniej warstwy
+    void train(vector<double> &data, vector<double> &target);   funkcja trenująca sieć
+
+};
+
+nnet loadNet(string name);  funkcja ładująca siec z pliku
+
+struct vectors{             struktura, będąca zbiorem wektorów, nie jest konieczna jednak została zbudowana dla wygody użycia progamu
+    vector <double> error;
+    vector <double> soft;
+    vector <double> target; 
+    vector <int> n_struct;
+    vector <double> data;
+};
+
+
+-----------------------------------------------
+
+class mnist_img{				
+    public:	
+    vector <vector <double>> images;		zbiór wektorów reprezentujących obraz
+    vector <double> labels;			zbiór etykiet obrazów
+    void load(string name,int number);		funkcja ładująca obrazy i etykiety z pliku (ścieżka pliku, liczba obrazów do załadowania)
+    void read_digit(int number);		funkcja wypisująca w konsoli uprzednio załadowany obraz o indeksie podanym jako argument
+};
